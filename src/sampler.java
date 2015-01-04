@@ -10,13 +10,13 @@ class Sampler {
     	
     	Function f = new FunctionBuilder().var(0.3).buildFunction();
     	
-    	double step = 20;
+    	double step = 22;
     	
-    	for(int i =0; i < step; i++) {
+    	for(int i = 1; i < step-1; i++) {
     	
-    		vals[i] = f.call(i/step);
+    		vals[i-1] = f.call(i*1.0/(step-2.0));
     	
-    		System.out.println(vals[i]);
+    		System.out.println(i-1 + " " + i*1.0/(step-2.0) + " " + vals[i-1]);
     	}
     
     }
@@ -36,7 +36,7 @@ class Function {
 	}
 	
 	public double call(double x) {
-		double pureval = 2.0 * x * Math.PI;
+		double pureval = Math.sin(2.0 * x * Math.PI);
 		return noise(pureval);
 	}
 		
