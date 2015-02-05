@@ -1,42 +1,5 @@
 import java.util.Random;
-
-//graphics experimentation
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
-
-class graphics extends Canvas {
-	
-	public graphics(){
-		//setSize(400, 800); 
-		setBackground(Color.white); 
-	} 
-	
-	public void paint(Graphics g){ 
-		g.setColor(Color.blue); 
-		drawLine(g, 10, 10, 800, 10);
-		g.setColor(Color.red);
-		drawLine(g, 10, 10, 10, 800);
-		drawLine(g, 10, 10, 800, 800); 
-		
-		//g.drawRect(20, 150, 100, 100); 
-		//g.fillRect(20, 150, 100, 100); 
-		//g.fillOval(150, 20, 100, 100); 
-	}
-	
-	public void drawLine(Graphics g, int x1, int y1, int x2, int y2){
-		g.drawLine(x1, getHeight()-y1, x2, getHeight()-y2);
-	}
-	
-	public void update(Graphics g)
-	{
-		System.out.println("repaint!");
-	
-	}
-}
 
 class Sampler {
 
@@ -60,7 +23,7 @@ class Sampler {
     	//graphics class is now a type of canvas 
     	//since it extends the Canvas class 
     	//lets instantiate it  
-    	graphics GP = new graphics(); //create a new frame to which we will add a canvas  
+    	plotter2d GP = new plotter2d(); //create a new frame to which we will add a canvas  
     	Frame aFrame = new Frame(); 
     	aFrame.setSize(810, 830); //5 pixels either side for frame, 5 below for frame + 25 above foe window bar
     	aFrame.add(GP); 
