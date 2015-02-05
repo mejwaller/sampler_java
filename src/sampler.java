@@ -11,16 +11,30 @@ import java.awt.Toolkit;
 class graphics extends Canvas {
 	
 	public graphics(){
-		setSize(800, 800); 
+		//setSize(400, 800); 
 		setBackground(Color.white); 
 	} 
 	
 	public void paint(Graphics g){ 
 		g.setColor(Color.blue); 
-		g.drawLine(30, 30, 800, 800); 
-		g.drawRect(20, 150, 100, 100); 
-		g.fillRect(20, 150, 100, 100); 
-		g.fillOval(150, 20, 100, 100); 
+		drawLine(g, 10, 10, 800, 10);
+		g.setColor(Color.red);
+		drawLine(g, 10, 10, 10, 800);
+		drawLine(g, 10, 10, 800, 800); 
+		
+		//g.drawRect(20, 150, 100, 100); 
+		//g.fillRect(20, 150, 100, 100); 
+		//g.fillOval(150, 20, 100, 100); 
+	}
+	
+	public void drawLine(Graphics g, int x1, int y1, int x2, int y2){
+		g.drawLine(x1, getHeight()-y1, x2, getHeight()-y2);
+	}
+	
+	public void update(Graphics g)
+	{
+		System.out.println("repaint!");
+	
 	}
 }
 
@@ -48,9 +62,11 @@ class Sampler {
     	//lets instantiate it  
     	graphics GP = new graphics(); //create a new frame to which we will add a canvas  
     	Frame aFrame = new Frame(); 
-    	aFrame.setSize(800, 800); //add the canvas  
+    	aFrame.setSize(810, 830); //5 pixels either side for frame, 5 below for frame + 25 above foe window bar
     	aFrame.add(GP); 
     	aFrame.setVisible(true); 
+    	
+    	System.out.println("GP width = " + GP.getWidth() + " GP height = " + GP.getHeight());
     	
     	
     
