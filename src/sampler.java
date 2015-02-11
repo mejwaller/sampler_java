@@ -17,8 +17,8 @@ class Sampler {
     	
     	for(int i = 0; i <= step; i++) {
     	    
-    	    x.set(i,i*1.0/(step));    	
-    		t.set(i,f.call(x.get(i)));
+    	    x.add(i*1.0/(step));    	
+    		t.add(f.call(x.get(i)));
     	
     		System.out.println(i + " " + x.get(i) + " " + t.get(i));
     	}

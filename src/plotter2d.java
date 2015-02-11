@@ -34,8 +34,8 @@ public class plotter2d extends Canvas {
 	    this.t=t;
 	    Collections.sort(x);//need max and mins for scaling
 	    Collections.sort(t);  
-	    System.out.println("max X is " + x.get(0) + " and min X is x.get(x.size()-1");
-	    System.out.println("max t is " + t.get(0) + " and min t is t.get(t.size()-1");
+	    System.out.println("min X is " + x.get(0) + " and max X is " + x.get(x.size()-1));
+	    System.out.println("min t is " + t.get(0) + " and max t is " + t.get(t.size()-1));
 	    
 	}
 	
