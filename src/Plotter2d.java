@@ -15,6 +15,7 @@ public class plotter2d extends Canvas {
     private List<Double> x;
     private List<Double> t;
     private Map<Double,Double> vals;
+    private double xmax, xmin, ymax, ymin, xrange, yrange;
     
 	
 	public plotter2d(){
@@ -34,8 +35,14 @@ public class plotter2d extends Canvas {
 	    this.t=t;
 	    Collections.sort(x);//need max and mins for scaling
 	    Collections.sort(t);  
-	    System.out.println("min X is " + x.get(0) + " and max X is " + x.get(x.size()-1));
-	    System.out.println("min t is " + t.get(0) + " and max t is " + t.get(t.size()-1));
+	    xmin = x.get(0);
+	    ymin = t.get(0);
+	    xmax = x.get(x.size()-1);
+	    ymax = t.get(t.size()-1);
+	    xrange = xmax-xmin;
+	    yrange = ymax - ymin;
+	    System.out.println("min X is " + xmin + " and max X is " + xmax + " and xrange is " + xrange);
+	    System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);
 	    
 	}
 	
@@ -66,4 +73,14 @@ public class plotter2d extends Canvas {
 		System.out.println("repaint!");
 	
 	}
+	
+	//0,0 is at top left by default - ensure transforms are made to set ymin at bottom left
+	// and necessary scalings applied
+	public void setYtransform() {
+	}
+	
+	//ensure necessary sclaing are applied and any necessary transforms applied
+	public void setXtransform() {
+	}
+
 }
