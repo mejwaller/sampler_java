@@ -74,9 +74,16 @@ public class Plotter2d extends Canvas {
 	
 	}
 	
+	public void invalidate() {
+		System.out.println("Invalidate!");
+		super.invalidate();
+		update(getGraphics());
+	}
+	
 	//0,0 is at top left by default - ensure transforms are made to set ymin at bottom left
 	// and necessary scalings applied
 	public void setYtransform() {
+		
 	}
 	
 	//ensure necessary sclaing are applied and any necessary transforms applied
