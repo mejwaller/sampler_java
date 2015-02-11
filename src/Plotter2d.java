@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
-public class plotter2d extends Canvas {
+public class Plotter2d extends Canvas {
     
     private List<Double> x;
     private List<Double> t;
@@ -18,7 +18,7 @@ public class plotter2d extends Canvas {
     private double xmax, xmin, ymax, ymin, xrange, yrange;
     
 	
-	public plotter2d(){
+	public Plotter2d(){
 	    x = new ArrayList<Double>();
 	    t = new ArrayList<Double>();
 	    vals = new HashMap<Double,Double>();
