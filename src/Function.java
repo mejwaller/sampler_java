@@ -1,3 +1,5 @@
+//naive attempt to create function object
+//random should only be required for specialisations
 import java.util.Random;
 
 public class Function {

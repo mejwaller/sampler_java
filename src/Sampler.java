@@ -13,6 +13,7 @@ class Sampler {
     	
     	Function f = new FunctionBuilder().var(0.3).buildFunction();
     	
+    	//hardcoded number. Sucks
     	double step = 20;
     	
     	for(int i = 0; i <= step; i++) {
