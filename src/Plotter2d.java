@@ -10,60 +10,95 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
-//this class shuld be in it's own package outside of sampler
+
 public class Plotter2d extends Canvas {
     
     private List<Double> x;
-    private List<Double> t;
+    private List<Double> y;
     private Map<Double,Double> vals;
     private double xmax, xmin, ymax, ymin, xrange, yrange;
+    private int yaxismin, yaxismax,xaxismin, xaxismax;//store actual points 
+    
+    public enum Shape {
+        RECT, ELLIPSE, CROSS, POLYGON
+    }
     
 	
 	public Plotter2d(){
 	    x = new ArrayList<Double>();
-	    t = new ArrayList<Double>();
-	    vals = new HashMap<Double,Double>();
-		//setSize(400, 800); 
+	    y = new ArrayList<Double>();
+	    vals = new HashMap<Double,Double>();//<x,y> pairs
+		setSize(1000, 1000); 
 		setBackground(Color.white); 
 	} 
 	
-	public void setVals(List<Double> x, List<Double> t) {
+	
+	//overload to manually set min, max for x and y if desired
+	public void setVals(List<Double> d, List<Double> t, double xmax, double xmin, double ymax, double ymin) {
+	    storeVals(d,t);
+	    this.xmax=xmax;
+	    this.xmin=xmin;
+	    this.ymax=ymax;
+	    this.ymin=ymin;
+	    xrange = xmax-xmin;
+	    yrange = ymax-ymin;
 	    
-	    for(int i =0; i<x.size();i++) {
-	        vals.put(x.get(i),t.get(i));
-	    }
-	    this.x=x;
-	    this.t=t;
+	    System.out.println("min X is " + xmin + " and max X is " + xmax + " and xrange is " + xrange);
+        System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);
+	}
+	
+	public void setVals(List<Double> d, List<Double> t) {
+	    
+	    storeVals(d,t);
+	    
+	    this.x=d;
+	    this.y=t;
 	    
 	    //stupidly expensive way to get axes max and min
 	    //need max and min really to ensure graph is correctly 'balanced' on screen
 	    //what about multiple data sets? Beyind scope here for noew - assume x and single data set y = f(x)
 	    //axes should be separate objects anyway
 	    Collections.sort(x);//need max and mins for scaling
-	    Collections.sort(t);  
+	    Collections.sort(y);  
 	    xmin = x.get(0);
-	    ymin = t.get(0);
+	    ymin = y.get(0);
 	    xmax = x.get(x.size()-1);
-	    ymax = t.get(t.size()-1);
+	    ymax = y.get(y.size()-1);
 	    xrange = xmax-xmin;
-	    yrange = ymax - ymin;
+	    yrange = ymax-ymin;
 	    System.out.println("min X is " + xmin + " and max X is " + xmax + " and xrange is " + xrange);
-	    System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);
-	    
+	    System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);    
+	}
+	
+	public void storeVals(List<Double> d, List<Double> t) {
+	    for(int i =0; i < d.size();i++) {
+            vals.put(d.get(i),t.get(i));
+        }	    
 	}
 	
 	@Override
 	public void paint(Graphics g){ 
 	    
 	    System.out.println("Canvas size heigh is " + getHeight() + " and width is " + getWidth());
+	    yaxismin=getHeight()/10;
+	    yaxismax=getHeight()-getHeight()/10;
+	    xaxismin=getWidth()/10;
+	    xaxismax=getWidth()-getWidth()/10;
 	    
 	    //change to account for scaling
 		g.setColor(Color.black); 
+		//leave 10% whitespace margin top, bottom, right and left
+		drawLine(g,xaxismin,yaxismin,xaxismax,yaxismin);
+		drawLine(g,xaxismin,yaxismin,xaxismin,yaxismax);
+		
+		plotData(Shape.ELLIPSE);
+		
+		
 		//yuck - just yuck
-		drawLine(g, 10, 10, 800, 10);
-		drawLine(g, 10, 10, 10, 800);
-		g.setColor(Color.red);
-		drawLine(g, 10, 10, 800, 800); 
+		//drawLine(g, 10, 10, 800, 10);
+		//drawLine(g, 10, 10, 10, 800);
+		//g.setColor(Color.red);
+		//drawLine(g, 10, 10, 800, 800); 
 		
 	}
 	
@@ -77,7 +112,7 @@ public class Plotter2d extends Canvas {
 	    super.update(g);
 	    paint(g);
 	    
-		System.out.println("repaint!");
+		//System.out.println("repaint!");
 	
 	}
 	
@@ -97,6 +132,30 @@ public class Plotter2d extends Canvas {
 	
 	//ensure necessary sclaing are applied and any necessary transforms applied
 	public void setXtransform() {
+	}
+	
+	public void plotData(Shape shape) {
+	    switch(shape) {
+	        case ELLIPSE:
+	            plotEllipses();
+	            break;
+	        default:
+	            System.out.println("Shape not implemented");
+	    }
+	}
+	
+	public void plotEllipses()
+	{
+	    for(Double key : vals.keySet()) {
+	        
+	        int xval = xaxismin + (int)(key.doubleValue()*((xaxismax-xaxismin)/xrange));
+	        int yval = yaxismin +(int)(vals.get(key)*((yaxismax-yaxismin)/xrange));
+	        
+	        getGraphics().drawOval(xval,yval,10,10);
+	        
+	        System.out.println("Plotting x = " + xval + " and y = " + yval );	        
+	    }
+	
 	}
 
 }

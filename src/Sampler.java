@@ -30,7 +30,7 @@ class Sampler {
     	Plotter2d GP = new Plotter2d(); //create a new frame to which we will add a canvas  
     	GP.setVals(x,t);
     	Frame aFrame = new Frame(); 
-    	aFrame.setSize(810, 830); //5 pixels either side for frame, 5 below for frame + 25 above foe window bar
+    	aFrame.setSize(1010, 1010); //5 pixels either side for frame, 5 below for frame + 25 above foe window bar
     	aFrame.add(GP); 
     	aFrame.setVisible(true); 
     	
