@@ -17,7 +17,7 @@ public class Plotter2d extends Canvas {
     private List<Double> y;
     private Map<Double,Double> vals;
     private double xmax, xmin, ymax, ymin, xrange, yrange;
-    private int yaxismin, yaxismax,xaxismin, xaxismax;//store actual points 
+    private int yaxismin, yaxismax,xaxismin, xaxismax, xaxisrange, yaxisrange;//store actual points 
     
     public enum Shape {
         RECT, ELLIPSE, CROSS, POLYGON
@@ -79,11 +79,13 @@ public class Plotter2d extends Canvas {
 	@Override
 	public void paint(Graphics g){ 
 	    
-	    System.out.println("Canvas size heigh is " + getHeight() + " and width is " + getWidth());
+	    System.out.println("Canvas size heigh is " + getHeight() + " and width is " + getWidth());	    
 	    yaxismin=getHeight()/10;
 	    yaxismax=getHeight()-getHeight()/10;
 	    xaxismin=getWidth()/10;
 	    xaxismax=getWidth()-getWidth()/10;
+	    yaxisrange = yaxismax-yaxismin;
+	    xaxisrange = xaxismax-xaxismin;
 	    
 	    //change to account for scaling
 		g.setColor(Color.black); 
@@ -103,6 +105,7 @@ public class Plotter2d extends Canvas {
 	}
 	
 	public void drawLine(Graphics g, int x1, int y1, int x2, int y2){
+	  //yaxis is inverted to get 'standard' axis with y going up rather tha device axis where y goes down.
 		g.drawLine(x1, getHeight()-y1, x2, getHeight()-y2);
 	}
 	
@@ -146,14 +149,21 @@ public class Plotter2d extends Canvas {
 	
 	public void plotEllipses()
 	{
+	    
+	    int height=10;
+	    int width=10;
 	    for(Double key : vals.keySet()) {
 	        
-	        int xval = xaxismin + (int)(key.doubleValue()*((xaxismax-xaxismin)/xrange));
-	        int yval = yaxismin +(int)(vals.get(key)*((yaxismax-yaxismin)/xrange));
+	        int xval = (int)(xaxismin + ((key.doubleValue()-xmin)/xrange)*xaxisrange);
+	        int yval = getHeight() - (int)(yaxismin + ((vals.get(key)-ymin)/yrange)*yaxisrange);
+	        	        
+	        getGraphics().drawOval(xval-width/2,yval-width/2,height,width);
 	        
-	        getGraphics().drawOval(xval,yval,10,10);
-	        
-	        System.out.println("Plotting x = " + xval + " and y = " + yval );	        
+	        /*System.out.println("xaxismin = " + xaxismin + " yaxismin = " + yaxismin + " xaxismax = " + xaxismax + " yaxismax = " + yaxismax );
+	        System.out.println("xrange = " + xrange + " and yrange = " + yrange);
+	        System.out.println("xval = xaxismin (" + xaxismin + ") + ((x (" + key.doubleValue() + ") - xmin (" + xmin + ")) (" + (key.doubleValue() - xmin) + ") / xrange (" + xrange + ")) * xaxisrange (" + xaxisrange + ")");
+	        System.out.println("Plotting x = " + xval + " and y = " + yval );
+	        */	        
 	    }
 	
 	}

@@ -15,14 +15,16 @@ class Sampler {
     	
     	//hardcoded number. Sucks
     	double step = 20;
-    	
+    	    	
     	for(int i = 0; i <= step; i++) {
-    	    
+    	       	    
     	    x.add(i*1.0/(step));    	
-    		t.add(f.call(x.get(i)));
-    	
+    		t.add(f.noise(x.get(i)));
+    	        	
     		System.out.println(i + " " + x.get(i) + " " + t.get(i));
     	}
+    	
+    	
     	
     	//graphics class is now a type of canvas 
     	//since it extends the Canvas class 

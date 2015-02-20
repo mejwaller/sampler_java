@@ -16,15 +16,17 @@ public class Function {
     }
     
     public double call(double x) {
-        double pureval = Math.sin(2.0 * x * Math.PI);
-        return noise(pureval);
+        return Math.sin(2.0 * x * Math.PI);
+        //return noise(pureval);
     }
         
     public double noise(double val)
     {
+        double noisey=call(val);
         Random gen = new Random();
         //from z = (x-mu)/sigma - mu is val, sigma the variance so required val x is mu + generated val * sigma
-        return val + gen.nextGaussian()*variance;       
+        return noisey + gen.nextGaussian()*variance;  
+        //return val;
     }
     
 }
