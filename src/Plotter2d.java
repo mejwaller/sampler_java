@@ -19,36 +19,35 @@ public class Plotter2d extends Canvas {
 	
 	//Allow multiple XY data sets to plot
 	//For ach data set, x is key, y is val
-	private List<XYData> xydata = new Vector<XYData>();
+	private List<PlotData> xydata = new Vector<PlotData>();
+	private Axis xaxis = new Axis();
+	private Axis yaxis = new Axis();
+	public double xmax,xmin,ymax,ymin,xrange,yrange;
         
-    private double xmax, xmin, ymax, ymin, xrange, yrange;
-    private int yaxismin, yaxismax,xaxismin, xaxismax, xaxisrange, yaxisrange;//store actual points 
-    
     public enum Shape {
         RECT, ELLIPSE, CROSS, POLYGON
     }
     
-    public class XYData {
-    	Map<Double, Double> data = new HashMap<Double,Double>();
-    	Shape shape;
-    	Color colour;
-    	
-    	XYData(){
-    	
-    	}
-    	
-    	XYData(Map<Double,Double> points, Shape ashape, Color acolour) {
-    		data = points;
-    		shape= ashape;
-    		colour = acolour;
-    	}
-    }
+    
     
 	
 	public Plotter2d(){
 		setSize(1000, 1000); 
 		setBackground(Color.white); 
 	} 
+	
+	public void addCurve(Function f, Color acolour, double xmax, double xmin, double ymax, double ymin) {
+		
+		CurveData data = new CurveData(f, acolour);
+		data.xmax=this.xmax=xmax;
+		data.xmin=this.ymin=xmin;
+		data.ymax=this.ymax=ymax;
+		data.ymin=this.ymin=ymin;
+		data.xrange = this.xrange = xmax-xmin;
+		data.yrange = this.yrange = ymax-ymin;
+		xydata.add(data);
+		
+	}
 	
 	public void addXYData(Map<Double,Double> data, Shape shape, Color colour) {
 						
@@ -59,61 +58,57 @@ public class Plotter2d extends Canvas {
 		
 		
 		//autocalculate  max and mins
-		for(XYData dataset: xydata) {
+		for(PlotData dataset: xydata) {
 			xvals.addAll(dataset.data.keySet());
 			yvals.addAll(dataset.data.values());
 			
 		}
 		
-		xmax=xvals.last();
-		xmin=xvals.first();
-		ymax=yvals.last();
-		ymin=yvals.first();
-		xrange = xmax-xmin;
-	    yrange = ymax-ymin;
-		
-		System.out.println("XYDATA: xmax is " + xmax + " xmin is " + xmin + " ymax is " + ymax + " ymin is " + ymin);
+		//er...crap..should be 1 instance of max,min, rnage data shared by all...
+		for(PlotData dataset: xydata) {
+			dataset.xmax=xmax=xvals.last();
+			dataset.xmin=xmin-xvals.first();
+			dataset.ymax=ymax=yvals.last();
+			dataset.ymin=ymin=yvals.first();
+			dataset.xrange = xrange = dataset.xmax-dataset.xmin;
+			dataset.yrange = yrange = dataset.ymax-dataset.ymin;
+		}
 		
 	}
 	
-	public void addXYData(Map<Double,Double> data, Shape shape, Color colour, double xmax, double xmin, double ymax, double ymin) {
-		xydata.add(new XYData(data,shape,colour));
-		this.xmax=xmax;
-		this.xmin=xmin;
-		this.ymax=ymax;
-		this.ymin=ymin;
-		xrange = xmax-xmin;
-	    yrange = ymax-ymin;
+	public void addXYData(Map<Double,Double> somedata, Shape shape, Color colour, double xmax, double xmin, double ymax, double ymin) {
+		XYData data = new XYData(somedata,shape,colour);
+		data.xmax=xmax;
+		data.xmin=xmin;
+		data.ymax=ymax;
+		data.ymin=ymin;
+		data.xrange = xmax-xmin;
+		data.yrange = ymax-ymin;
+		xydata.add(data);
+		
 	}
 	
 	@Override
 	public void paint(Graphics g){ 
 	    
-	    System.out.println("Canvas size heigh is " + getHeight() + " and width is " + getWidth());	    
-	    yaxismin=getHeight()/10;
-	    yaxismax=getHeight()-getHeight()/10;
-	    xaxismin=getWidth()/10;
-	    xaxismax=getWidth()-getWidth()/10;
-	    yaxisrange = yaxismax-yaxismin;
-	    xaxisrange = xaxismax-xaxismin;
+	    System.out.println("Canvas size height is " + getHeight() + " and width is " + getWidth());	    
+	    yaxis.yaxismin=getHeight()/10;
+	    yaxis.yaxismax=getHeight()-getHeight()/10;
+	    xaxis.xaxismin=getWidth()/10;
+	    xaxis.xaxismax=getWidth()-getWidth()/10;
+	    yaxis.yaxisrange = yaxis.yaxismax-yaxis.yaxismin;
+	    xaxis.xaxisrange = xaxis.xaxismax-xaxis.xaxismin;
+	    yaxis.canvasHeight = getHeight();
 	    
 	    //change to account for scaling
 		g.setColor(Color.black); 
 		//leave 10% whitespace margin top, bottom, right and left
-		drawLine(g,xaxismin,yaxismin,xaxismax,yaxismin);
-		drawLine(g,xaxismin,yaxismin,xaxismin,yaxismax);
+		drawLine(g,xaxis.xaxismin,yaxis.yaxismin,xaxis.xaxismax,yaxis.yaxismin);
+		drawLine(g,xaxis.xaxismin,yaxis.yaxismin,xaxis.xaxismin,yaxis.yaxismax);
 		
-		
-		//TODO: remove shape from this call - needs ot be associted with each XY data set
-		//(as does colour actually...)
-		plotData(g);
-		
-		
-		//yuck - just yuck
-		//drawLine(g, 10, 10, 800, 10);
-		//drawLine(g, 10, 10, 10, 800);
-		//g.setColor(Color.red);
-		//drawLine(g, 10, 10, 800, 800); 
+		for(PlotData data: xydata) {	
+			data.plotData(g,xaxis,yaxis);
+		}
 		
 	}
 	
@@ -138,70 +133,6 @@ public class Plotter2d extends Canvas {
 		System.out.println("Invalidate!");
 		super.invalidate();
 		update(getGraphics());
-	}
-	
-	//0,0 is at top left by default - ensure transforms are made to set ymin at bottom left
-	// and necessary scalings applied
-	public void setYtransform() {
-		
-	}
-	
-	//ensure necessary sclaing are applied and any necessary transforms applied
-	public void setXtransform() {
-	}
-	
-	public void plotData(Graphics g) {
-		
-		for(XYData data: xydata) { 
-			switch(data.shape) {
-	        	case ELLIPSE:
-	        		plotEllipses(g, data.data, data.colour);
-	        		break;
-	        	case RECT:
-	        		plotRects(g, data.data, data.colour);
-	        		break;
-	        	default:
-	        		System.out.println("Shape not implemented");
-			}	    
-		}
-	}
-	
-	public void plotEllipses(Graphics g, Map<Double,Double> vals, Color colour) {
-	    
-	    int height=10;
-	    int width=10;
-	    for(Double key : vals.keySet()) {
-	        
-	        int xval = (int)(xaxismin + ((key.doubleValue()-xmin)/xrange)*xaxisrange);
-	        int yval = getHeight() - (int)(yaxismin + ((vals.get(key)-ymin)/yrange)*yaxisrange);
-	        
-	        g.setColor(colour);
-	        //System.out.println("Colour is " + colour);
-	        System.out.println("Colour is " + g.getColor());
-	        g.drawOval(xval-width/2,yval-width/2,height,width);
-	        
-	        /*System.out.println("xaxismin = " + xaxismin + " yaxismin = " + yaxismin + " xaxismax = " + xaxismax + " yaxismax = " + yaxismax );
-	        System.out.println("xrange = " + xrange + " and yrange = " + yrange);
-	        System.out.println("xval = xaxismin (" + xaxismin + ") + ((x (" + key.doubleValue() + ") - xmin (" + xmin + ")) (" + (key.doubleValue() - xmin) + ") / xrange (" + xrange + ")) * xaxisrange (" + xaxisrange + ")");
-	        System.out.println("Plotting x = " + xval + " and y = " + yval );
-	        */	        
-	    }
-	
-	}
-	
-	public void plotRects(Graphics g, Map<Double,Double> vals, Color colour) {
-		int height=10;
-	    int width=10;
-	    for(Double key : vals.keySet()) {
-	        
-	        int xval = (int)(xaxismin + ((key.doubleValue()-xmin)/xrange)*xaxisrange);
-	        int yval = getHeight() - (int)(yaxismin + ((vals.get(key)-ymin)/yrange)*yaxisrange);
-	        
-	        g.setColor(colour);
-	        System.out.println("Colour is " + g.getColor());
-	        g.drawRect(xval-width/2,yval-width/2,height,width);
-	    }
-		
 	}
 
 }
