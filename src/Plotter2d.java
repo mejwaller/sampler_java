@@ -9,13 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.Vector;
 
 
 public class Plotter2d extends Canvas {
-    
-    private List<Double> x;
-    private List<Double> y;
-    private Map<Double,Double> vals;
+	
+	//Allow multiple XY data sets to plot
+	//For ach data set, x is key, y is val
+	private List<Map<Double, Double>> XYData = new Vector<Map<Double,Double>>();
+        
     private double xmax, xmin, ymax, ymin, xrange, yrange;
     private int yaxismin, yaxismax,xaxismin, xaxismax, xaxisrange, yaxisrange;//store actual points 
     
@@ -25,55 +30,45 @@ public class Plotter2d extends Canvas {
     
 	
 	public Plotter2d(){
-	    x = new ArrayList<Double>();
-	    y = new ArrayList<Double>();
-	    vals = new HashMap<Double,Double>();//<x,y> pairs
 		setSize(1000, 1000); 
 		setBackground(Color.white); 
 	} 
 	
-	
-	//overload to manually set min, max for x and y if desired
-	public void setVals(List<Double> d, List<Double> t, double xmax, double xmin, double ymax, double ymin) {
-	    storeVals(d,t);
-	    this.xmax=xmax;
-	    this.xmin=xmin;
-	    this.ymax=ymax;
-	    this.ymin=ymin;
-	    xrange = xmax-xmin;
+	public void addXYData(Map<Double,Double> data, Shape shape) {
+		
+		
+		XYData.add(data);
+		
+		SortedSet<Double> xvals = new TreeSet<Double>();
+		SortedSet<Double> yvals = new TreeSet<Double>();
+		
+		
+		//autocalculate  max and mins
+		for(Map<Double,Double> dataset: XYData) {
+			xvals.addAll(dataset.keySet());
+			yvals.addAll(dataset.values());
+			
+		}
+		
+		xmax=xvals.last();
+		xmin=xvals.first();
+		ymax=yvals.last();
+		ymin=yvals.first();
+		xrange = xmax-xmin;
 	    yrange = ymax-ymin;
-	    
-	    System.out.println("min X is " + xmin + " and max X is " + xmax + " and xrange is " + xrange);
-        System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);
+		
+		System.out.println("XYDATA: xmax is " + xmax + " xmin is " + xmin + " ymax is " + ymax + " ymin is " + ymin);
+		
 	}
 	
-	public void setVals(List<Double> d, List<Double> t) {
-	    
-	    storeVals(d,t);
-	    
-	    this.x=d;
-	    this.y=t;
-	    
-	    //stupidly expensive way to get axes max and min
-	    //need max and min really to ensure graph is correctly 'balanced' on screen
-	    //what about multiple data sets? Beyind scope here for noew - assume x and single data set y = f(x)
-	    //axes should be separate objects anyway
-	    Collections.sort(x);//need max and mins for scaling
-	    Collections.sort(y);  
-	    xmin = x.get(0);
-	    ymin = y.get(0);
-	    xmax = x.get(x.size()-1);
-	    ymax = y.get(y.size()-1);
-	    xrange = xmax-xmin;
+	public void addXYData(Map<Double,Double> data, Shape shape, double xmax, double xmin, double ymax, double ymin) {
+		XYData.add(data);
+		this.xmax=xmax;
+		this.xmin=xmin;
+		this.ymax=ymax;
+		this.ymin=ymin;
+		xrange = xmax-xmin;
 	    yrange = ymax-ymin;
-	    System.out.println("min X is " + xmin + " and max X is " + xmax + " and xrange is " + xrange);
-	    System.out.println("min Y is " + ymin + " and max y is " + ymax + " and yrange is " + yrange);    
-	}
-	
-	public void storeVals(List<Double> d, List<Double> t) {
-	    for(int i =0; i < d.size();i++) {
-            vals.put(d.get(i),t.get(i));
-        }	    
 	}
 	
 	@Override
@@ -93,6 +88,9 @@ public class Plotter2d extends Canvas {
 		drawLine(g,xaxismin,yaxismin,xaxismax,yaxismin);
 		drawLine(g,xaxismin,yaxismin,xaxismin,yaxismax);
 		
+		
+		//TODO: remove shape from this call - needs ot be associted with each XY data set
+		//(as does colour actually...)
 		plotData(Shape.ELLIPSE);
 		
 		
@@ -138,16 +136,19 @@ public class Plotter2d extends Canvas {
 	}
 	
 	public void plotData(Shape shape) {
-	    switch(shape) {
-	        case ELLIPSE:
-	            plotEllipses();
-	            break;
-	        default:
-	            System.out.println("Shape not implemented");
-	    }
+		
+		for(Map<Double, Double> data: XYData) { 
+			switch(shape) {
+	        	case ELLIPSE:
+	        		plotEllipses(data);
+	        		break;
+	        	default:
+	        		System.out.println("Shape not implemented");
+			}	    
+		}
 	}
 	
-	public void plotEllipses()
+	public void plotEllipses(Map<Double,Double> vals)
 	{
 	    
 	    int height=10;
