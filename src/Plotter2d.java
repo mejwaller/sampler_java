@@ -22,7 +22,8 @@ public class Plotter2d extends Canvas {
 	private List<PlotData> xydata = new Vector<PlotData>();
 	private Axis xaxis = new Axis();
 	private Axis yaxis = new Axis();
-	public double xmax,xmin,ymax,ymin,xrange,yrange;
+	//public double xmax,xmin,ymax,ymin,xrange,yrange;
+	private DataRange range;
         
     public enum Shape {
         RECT, ELLIPSE, CROSS, POLYGON
@@ -34,28 +35,21 @@ public class Plotter2d extends Canvas {
 	public Plotter2d(){
 		setSize(1000, 1000); 
 		setBackground(Color.white); 
+		range = new DataRange();
 	} 
 	
-	public void addCurve(Function f, Color acolour, double xmax, double xmin, double ymax, double ymin) {
-		
-		CurveData data = new CurveData(f, acolour);
-		data.xmax=this.xmax=xmax;
-		data.xmin=this.ymin=xmin;
-		data.ymax=this.ymax=ymax;
-		data.ymin=this.ymin=ymin;
-		data.xrange = this.xrange = xmax-xmin;
-		data.yrange = this.yrange = ymax-ymin;
-		xydata.add(data);
-		
+	public DataRange getRange(){
+		return range;
 	}
 	
-	public void addXYData(Map<Double,Double> data, Shape shape, Color colour) {
-						
-		xydata.add(new XYData(data, shape, colour));
+	
+	//more generic addData function - but need all to have their data HasMap<double,double> set before it can be used..
+	public void addData(PlotData data) {
+		
+		xydata.add(data);
 		
 		SortedSet<Double> xvals = new TreeSet<Double>();
 		SortedSet<Double> yvals = new TreeSet<Double>();
-		
 		
 		//autocalculate  max and mins
 		for(PlotData dataset: xydata) {
@@ -64,34 +58,20 @@ public class Plotter2d extends Canvas {
 			
 		}
 		
-		//er...crap..should be 1 instance of max,min, rnage data shared by all...
+		range.setRanges(xvals.last(),xvals.first(),yvals.last(),yvals.first(),xvals.last()-xvals.first(),yvals.last()-yvals.first());
+		
+		//should be 1 instance of max,min, range data shared by all...
 		for(PlotData dataset: xydata) {
-			dataset.xmax=xmax=xvals.last();
-			dataset.xmin=xmin-xvals.first();
-			dataset.ymax=ymax=yvals.last();
-			dataset.ymin=ymin=yvals.first();
-			dataset.xrange = xrange = dataset.xmax-dataset.xmin;
-			dataset.yrange = yrange = dataset.ymax-dataset.ymin;
+			dataset.setDataRange(range);
 		}
 		
-	}
-	
-	public void addXYData(Map<Double,Double> somedata, Shape shape, Color colour, double xmax, double xmin, double ymax, double ymin) {
-		XYData data = new XYData(somedata,shape,colour);
-		data.xmax=xmax;
-		data.xmin=xmin;
-		data.ymax=ymax;
-		data.ymin=ymin;
-		data.xrange = xmax-xmin;
-		data.yrange = ymax-ymin;
-		xydata.add(data);
-		
-	}
+	}	
 	
 	@Override
 	public void paint(Graphics g){ 
 	    
 	    System.out.println("Canvas size height is " + getHeight() + " and width is " + getWidth());	    
+	    //leave 10% whitespace margin top, bottom, right and left
 	    yaxis.yaxismin=getHeight()/10;
 	    yaxis.yaxismax=getHeight()-getHeight()/10;
 	    xaxis.xaxismin=getWidth()/10;
@@ -102,7 +82,7 @@ public class Plotter2d extends Canvas {
 	    
 	    //change to account for scaling
 		g.setColor(Color.black); 
-		//leave 10% whitespace margin top, bottom, right and left
+		
 		drawLine(g,xaxis.xaxismin,yaxis.yaxismin,xaxis.xaxismax,yaxis.yaxismin);
 		drawLine(g,xaxis.xaxismin,yaxis.yaxismin,xaxis.xaxismin,yaxis.yaxismax);
 		
@@ -130,7 +110,7 @@ public class Plotter2d extends Canvas {
 	//this gets called by awt sutomatically on e.g resize
 	@Override
 	public void invalidate() {
-		System.out.println("Invalidate!");
+		//System.out.println("Invalidate!");
 		super.invalidate();
 		update(getGraphics());
 	}

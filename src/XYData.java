@@ -36,8 +36,8 @@ public class XYData extends PlotData{
    	    int width=10;
    	    for(Double key : vals.keySet()) {
    	        
-   	        int xval = (int)(xaxis.xaxismin + ((key.doubleValue()-xmin)/xrange)*xaxis.xaxisrange);
-   	        int yval = yaxis.canvasHeight - (int)(yaxis.yaxismin + ((vals.get(key)-ymin)/yrange)*yaxis.yaxisrange);
+   	        int xval = (int)(xaxis.xaxismin + ((key.doubleValue()-range.xmin)/range.xrange)*xaxis.xaxisrange);
+   	        int yval = yaxis.canvasHeight - (int)(yaxis.yaxismin + ((vals.get(key)-range.ymin)/range.yrange)*yaxis.yaxisrange);
    	        
    	        g.setColor(colour);
    	        g.drawOval(xval-width/2,yval-width/2,height,width);
@@ -51,8 +51,8 @@ public class XYData extends PlotData{
    	    int width=10;
    	    for(Double key : vals.keySet()) {
    	        
-   	        int xval = (int)(xaxis.xaxismin + ((key.doubleValue()-xmin)/xrange)*xaxis.xaxisrange);
-   	        int yval = yaxis.canvasHeight - (int)(yaxis.yaxismin + ((vals.get(key)-ymin)/yrange)*yaxis.yaxisrange);
+   	        int xval = (int)(xaxis.xaxismin + ((key.doubleValue()-range.xmin)/range.xrange)*xaxis.xaxisrange);
+   	        int yval = yaxis.canvasHeight - (int)(yaxis.yaxismin + ((vals.get(key)-range.ymin)/range.yrange)*yaxis.yaxisrange);
    	        
    	        g.setColor(colour);
    	        g.drawRect(xval-width/2,yval-width/2,height,width);

@@ -20,8 +20,7 @@ class Sampler {
     	f.setVar(0.3);
     	//g.setVar(0.3);
     	
-    	//hardcoded number. Sucks
-    	double step = 20;
+       	double step = 20;
     	    	
     	for(int i = 0; i <= step; i++) {
     		
@@ -49,18 +48,23 @@ class Sampler {
     	        	
     		//System.out.println(i + " " + x.get(i) + " " + t.get(i));
     	}*/
+    	
+    	XYData xy1 = new XYData(xyset1,Plotter2d.Shape.ELLIPSE, Color.BLACK);
+    	XYData xy2 = new XYData(xyset2, Plotter2d.Shape.RECT, Color.BLUE);
+    	CurveData c = new CurveData(f,0.001,new DataRange(1.0,0.0,1.0,-1.0,1,2),Color.RED);    	
       
     	Plotter2d GP = new Plotter2d(); //create a new frame to which we will add a canvas  
-    	GP.addXYData(xyset1, Plotter2d.Shape.ELLIPSE, Color.BLACK);
-    	GP.addXYData(xyset2, Plotter2d.Shape.RECT, Color.BLUE);
-    	GP.addCurve(f,Color.RED,GP.xmax,GP.xmin,GP.ymax,GP.ymin);
+    	GP.addData(xy1);
+    	GP.addData(xy2);
+    	GP.addData(c);
     	//GP.addXYData(xyset3, Plotter2d.Shape.ELLIPSE, Color.BLUE);
     	Frame aFrame = new Frame(); 
     	aFrame.setSize(1010, 1010); //5 pixels either side for frame, 5 below for frame + 25 above foe window bar
     	aFrame.add(GP); 
     	aFrame.setVisible(true); 
     	
-    	System.out.println("GP width = " + GP.getWidth() + " GP height = " + GP.getHeight());
+    	//System.out.println("xmax is " + GP.getRange().xmax + " xmin is " + GP.getRange().xmin + " ymax is " + GP.getRange().ymax + " ymin is " + GP.getRange().ymin);
+    	//System.out.println("GP width = " + GP.getWidth() + " GP height = " + GP.getHeight());
     	
     	
     

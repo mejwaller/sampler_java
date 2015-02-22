@@ -10,9 +10,13 @@ public abstract class PlotData {
 	Color colour;
 	Axis xaxis;
 	Axis yaxis;
-	public double xmax, xmin, ymax, ymin, xrange, yrange;
+	DataRange range;
 	
 	
 	public abstract void plotData(Graphics g, Axis xaxis, Axis Yaxis);
+	
+	public void setDataRange(DataRange range) {
+		this.range=range;
+	}
 
 }
